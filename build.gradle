@@ -1,0 +1,190 @@
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'net.minecraftforge.gradle' version "${forge_gradle_version}"
+    id 'org.spongepowered.mixin' version "${mixin_gradle_version}"
+    id 'wtf.gofancy.fancygradle' version "${fancy_gradle_version}"
+    id 'me.modmuss50.mod-publish-plugin' version "${mod_publish_gradle_version}"
+}
+
+version = mod_version
+group = mod_id
+base.archivesName = mod_name
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+
+minecraft {
+    mappings channel: mappings_channel, version: mappings_version
+
+    runs {
+        client {
+            args "--username=Nischhelm"
+
+            jvmArg "-Dfml.coreMods.load=${mixin_loader_class}"
+            jvmArg "-Dmixin.hotSwap=true"
+            jvmArg "-Dmixin.checks.interfaces=true"
+            jvmArg "-Dmixin.debug.export=true"
+
+            workingDirectory project.file('run')
+
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+        }
+
+        server {
+
+            jvmArg "-Dfml.coreMods.load=${mixin_loader_class}"
+            jvmArg "-Dmixin.hotSwap=true"
+            jvmArg "-Dmixin.checks.interfaces=true"
+            jvmArg "-Dmixin.debug.export=true"
+
+            workingDirectory project.file('runServer')
+
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+        }
+    }
+}
+
+repositories {
+    flatDir { dirs 'libs' }
+
+    maven { url = 'https://www.cursemaven.com' }
+    maven { url = "https://maven.k-4u.nl" }
+    maven { url = 'https://maven.blamejared.com' }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    compileOnly "org.spongepowered:mixin:${mixin_version}"
+    annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
+    compileOnly "io.github.llamalad7:mixinextras-common:${mixin_extras_version}"
+    annotationProcessor "io.github.llamalad7:mixinextras-common:${mixin_extras_version}"
+
+    implementation fg.deobf("libs:FermiumBooter:1.5.0-indev")
+    implementation fg.deobf("curse.maven:game-stages-268655:2951840")
+//    compileOnly fg.deobf("curse.maven:lycanitesmobs-${lycanites_version}")
+}
+
+mixin {
+    add sourceSets.main, "mixins.${mod_id}.refmap.json"
+}
+
+fancyGradle {
+    patches {
+        resources
+        coremods
+        asm
+        mergetool
+    }
+}
+
+processResources {
+    var replaceProperties = [
+            'mod_id': mod_id,
+            'mod_name': mod_name,
+            'version': mod_version,
+            'mcversion': minecraft_version,
+            'mod_description': mod_description,
+            'mod_author': mod_author
+    ]
+
+    inputs.properties replaceProperties
+
+    filesMatching('mcmod.info') {
+        expand replaceProperties
+    }
+}
+
+jar {
+    manifest {
+        def attr = [:]
+        attr['Specification-Title']         = mod_name
+        attr['Specification-Vendor']        = mod_author
+        attr['Specification-Version']       = '1'
+        attr['Implementation-Title']        = mod_name
+        attr['Implementation-Vendor']       = mod_author
+        attr['Implementation-Version']      = mod_version
+        attr['Implementation-Timestamp']    = new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        attr['FMLCorePlugin']               = mixin_loader_class
+        attr['FMLCorePluginContainsFMLMod'] = 'true'
+        attr['TweakClass']                  = 'org.spongepowered.asm.launch.MixinTweaker'
+        attr['ForceLoadAsMod'] = gradle.startParameter.taskNames[0] != 'runClient' && gradle.startParameter.taskNames[0] != 'runServer'
+        attributes(attr)
+    }
+}
+
+jar.finalizedBy('reobfJar')
+
+publishMods {
+    file = jar.archiveFile
+    changelog = providers.environmentVariable("CHANGELOG").orElse("See GitHub releases for changelog")
+    version = mod_version
+    type = STABLE
+    modLoaders.add("forge")
+
+    if (project.findProperty("publish_to_github") == "true") {
+        github {
+            accessToken = providers.environmentVariable("GITHUB_TOKEN")
+            repository = providers.environmentVariable("GITHUB_REPOSITORY").orElse("owner/repo")
+            commitish = "main"
+        }
+    }
+
+    if (project.findProperty("curseforge_project_id")) {
+        curseforge {
+            accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+            projectId = project.findProperty("curseforge_project_id")
+            minecraftVersions.add(minecraft_version)
+            modLoaders.add("forge")
+
+            client = true
+            server = true
+
+            requires("fermiumbooter")
+            requires("scape-and-run-parasites")
+            optional("the-lost-cities")
+            optional("bloodmoon")
+            optional("lycanites-mobs")
+            optional("in-control")
+            optional("crafttweaker")
+            optional("scape-and-run-parasites-deep-sea-danger")
+            optional("scape-and-run-parasites-extra")
+            optional("srp-addon-cotesia-glomerata")
+            optional("scape-and-run-parasites-mutant-beasts")
+            optional("scape-and-run-parasites-quark")
+            optional("scape-and-spartan-parasites")
+            optional("parasites-addon-overlast")
+            optional("antique-atlas")
+            optional("simple-voice-chat")
+        }
+    }
+
+    if (project.findProperty("modrinth_project_id")) {
+        modrinth {
+            accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+            projectId = project.findProperty("modrinth_project_id")
+            minecraftVersions.add(minecraft_version)
+            modLoaders.add("forge")
+
+            requires("fermiumbooter")
+            requires("scapeandrunparasites")
+            optional("the-lost-cities")
+            optional("blood-moon")
+            optional("lycanites-mobs")
+            optional("in-control")
+            optional("crafttweaker")
+            optional("scape-and-run-parasites-deep-sea-danger")
+            optional("scape-and-run-parasites-extra")
+            optional("srp-addon-cotesia-glomerata")
+            optional("scape-and-run-parasites-quark")
+            optional("antique-atlas")
+            optional("simple-voice-chat")
+            // not available on modrinth:
+//            optional("scape-and-run-parasites-mutant-beasts")
+//            optional("scape-and-spartan-parasites")
+//            optional("parasites-addon-overlast")
+        }
+    }
+}

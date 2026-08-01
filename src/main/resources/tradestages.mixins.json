@@ -1,0 +1,21 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "compatibilityLevel": "JAVA_8",
+    "package": "tradestages.mixins",
+    "mixins": [
+        "tradestages.mixins.AbstractVillagerMixin",
+        "tradestages.mixins.MerchantContainerMixin",
+        "tradestages.mixins.MerchantOfferMixin",
+        "tradestages.mixins.MerchantOffersMixin"
+    ],
+    "client": [
+        "tradestages.mixins.client.MerchantScreenMixin",
+        "tradestages.mixins.client.TradeOfferButtonMixin",
+        "tradestages.mixins.client.accessors.IMerchantScreenAccessor"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    },
+    "refmap": "mixins.tradestages.refmap.json"
+}
