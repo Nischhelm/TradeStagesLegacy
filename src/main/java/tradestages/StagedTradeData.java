@@ -4,27 +4,28 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.darkhax.gamestages.GameStageHelper;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ResourceLocation;
-import tradestages.trades.IStagedOffer;
+import net.minecraft.village.MerchantRecipe;
+import tradestages.wrapper.IMerchantRecipeWrapper;
+
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
-import net.darkhax.gamestages.GameStageHelper;
-import net.minecraft.world.item.trading.MerchantOffer;
 
 public class StagedTradeData {
-   private final Table<Integer, ResourceLocation, List<String>> stagedTrades = HashBasedTable.create();
+   private final Table<Integer, String, List<String>> stagedTrades = HashBasedTable.create();
 
-   public List<String> getStages(int tradeLevel, ResourceLocation profession) {
-      return this.stagedTrades.get(tradeLevel, profession);
+   public List<String> getStages(int tradeLevel, String career) {
+      return this.stagedTrades.get(tradeLevel, career);
    }
 
-   public boolean canTrade(EntityPlayer player, MerchantOffer offer) {
-      if (offer instanceof IStagedOffer stagedOffer) {
-         List<String> stages = this.stagedTrades.get(stagedOffer.getTradeLevel(), stagedOffer.getProfessionId());
-         return stages != null && !stages.isEmpty() ? GameStageHelper.hasAnyOf(player, stages) : true;
+   public boolean canTrade(EntityPlayer player, MerchantRecipe recipe) {
+      if (recipe instanceof IMerchantRecipeWrapper) {
+         IMerchantRecipeWrapper wrappedRecipe = (IMerchantRecipeWrapper) recipe;
+         List<String> stages = this.stagedTrades.get(wrappedRecipe.tsl$getTradeLevel(), wrappedRecipe.tsl$getCareer());
+         //TODO: item condition instead of tradelvl
+         return stages == null || stages.isEmpty() || GameStageHelper.hasAnyOf(player, stages); //TODO: hasAnyOf vs hasAllOf ? implement both?
       } else {
          return true;
       }
@@ -33,48 +34,40 @@ public class StagedTradeData {
    public static StagedTradeData load(JsonObject json) {
       StagedTradeData data = new StagedTradeData();
 
-      label56:
-      for (Entry<String, JsonElement> professionEntry : json.entrySet()) {
-         ResourceLocation profession = new ResourceLocation(professionEntry.getKey());
-         if (!professionEntry.getValue().isJsonObject()) {
-            ModRef.LOGGER.warn("Profession Entry '{}' has to be a Json Object, was {}", profession, professionEntry.getValue());
-         } else {
-            Iterator var5 = professionEntry.getValue().getAsJsonObject().entrySet().iterator();
+      for (Entry<String, JsonElement> careerEntry : json.entrySet()) {
+         String career = careerEntry.getKey();
+         if (!careerEntry.getValue().isJsonObject()) {
+            TradeStagesLegacy.LOGGER.warn("Career Entry '{}' has to be a Json Object, was {}", career, careerEntry.getValue());
+            continue;
+         }
 
-            while (true) {
-               Entry<String, JsonElement> tradeLevelEntry;
-               int tradeLevel;
-               while (true) {
-                  if (!var5.hasNext()) {
-                     continue label56;
-                  }
+         JsonObject careerObj = careerEntry.getValue().getAsJsonObject();
 
-                  tradeLevelEntry = (Entry<String, JsonElement>)var5.next();
+         for (Entry<String, JsonElement> tradeLevelEntry : careerObj.entrySet()) {
+            int tradeLevel;
+            try {
+               tradeLevel = Integer.parseInt(tradeLevelEntry.getKey());
+            } catch (NumberFormatException e) {
+               TradeStagesLegacy.LOGGER.warn("Trade level has to be a whole number, was {}", tradeLevelEntry.getKey());
+               continue;
+            }
 
-                  try {
-                     tradeLevel = Integer.parseInt(tradeLevelEntry.getKey());
-                     break;
-                  } catch (NumberFormatException var11) {
-                     ModRef.LOGGER.warn("Trade level has to be a whole number, was {}", tradeLevelEntry.getKey());
-                  }
-               }
+            if (!tradeLevelEntry.getValue().isJsonArray()) {
+               TradeStagesLegacy.LOGGER.warn("Trade Level Entry '{}' has to be a Json Array, was {}", tradeLevelEntry.getKey(), tradeLevelEntry.getValue());
+               continue;
+            }
 
-               if (!tradeLevelEntry.getValue().isJsonArray()) {
-                  ModRef.LOGGER.warn("Trade Level Entry '{}' has to be a Json Object, was {}", profession, professionEntry.getValue());
+            List<String> stages = new ArrayList<>();
+
+            for (JsonElement stageJson : tradeLevelEntry.getValue().getAsJsonArray()) {
+               if (stageJson.isJsonPrimitive() && stageJson.getAsJsonPrimitive().isString()) {
+                  stages.add(stageJson.getAsString());
                } else {
-                  List<String> stages = new ArrayList<>();
-
-                  for (JsonElement stageJson : tradeLevelEntry.getValue().getAsJsonArray()) {
-                     if (stageJson.isJsonPrimitive() && stageJson.getAsJsonPrimitive().isString()) {
-                        stages.add(stageJson.getAsString());
-                     } else {
-                        ModRef.LOGGER.warn("Stage has to be a String, was {}", stageJson);
-                     }
-                  }
-
-                  data.stagedTrades.put(tradeLevel, profession, stages);
+                  TradeStagesLegacy.LOGGER.warn("Stage has to be a String, was {}", stageJson);
                }
             }
+
+            data.stagedTrades.put(tradeLevel, career, stages);
          }
       }
 

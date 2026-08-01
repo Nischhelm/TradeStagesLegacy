@@ -1,21 +1,19 @@
 {
     "required": true,
-    "minVersion": "0.8",
-    "compatibilityLevel": "JAVA_8",
     "package": "tradestages.mixins",
+    "refmap": "mixins.tradestages.refmap.json",
+    "compatibilityLevel": "JAVA_8",
+    "minVersion": "0.8",
     "mixins": [
-        "tradestages.mixins.AbstractVillagerMixin",
-        "tradestages.mixins.MerchantContainerMixin",
-        "tradestages.mixins.MerchantOfferMixin",
-        "tradestages.mixins.MerchantOffersMixin"
+        "EntityVillagerMixin",
+        "InventoryMerchantMixin_DenyTrade",
+        "MerchantRecipeListMixin_ReadWrite",
+        "MerchantRecipeMixin_ReadWrite"
     ],
     "client": [
-        "tradestages.mixins.client.MerchantScreenMixin",
-        "tradestages.mixins.client.TradeOfferButtonMixin",
-        "tradestages.mixins.client.accessors.IMerchantScreenAccessor"
+        "GuiMerchantMixin"
     ],
     "injectors": {
         "defaultRequire": 1
-    },
-    "refmap": "mixins.tradestages.refmap.json"
+    }
 }
