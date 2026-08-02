@@ -29,11 +29,16 @@ public class MerchantRecipeListMixin_ReadWrite {
             String careerIdStr = wrappedRecipe.tsl$getCareer();
             if(careerIdStr == null) careerIdStr = "minecraft:villager";
 
+            String professionIdStr = wrappedRecipe.tsl$getProfession();
+            if(professionIdStr == null) professionIdStr = "minecraft:villager";
+
             buffer.writeVarInt(wrappedRecipe.tsl$getTradeLevel());
             buffer.writeString(careerIdStr);
+            buffer.writeString(professionIdStr);
         } else {
             //This shouldnt happen
             buffer.writeVarInt(-1);
+            buffer.writeString("minecraft:villager");
             buffer.writeString("minecraft:villager");
         }
     }
@@ -45,10 +50,12 @@ public class MerchantRecipeListMixin_ReadWrite {
     private static void tsl_readTradeLevel(
             PacketBuffer buffer, CallbackInfoReturnable<MerchantRecipeList> cir,
             @Share("tradeLvl")LocalIntRef tradeLvl,
-            @Share("careerName")LocalRef<String> careerName
+            @Share("careerName")LocalRef<String> careerName,
+            @Share("professionName")LocalRef<String> professionName
     ) {
         tradeLvl.set(buffer.readVarInt());
         careerName.set(buffer.readString(32767));
+        professionName.set(buffer.readString(32767));
     }
 
     @ModifyArg(
@@ -58,12 +65,14 @@ public class MerchantRecipeListMixin_ReadWrite {
     private static Object tsl_readTradeLevel(
             Object recipe,
             @Share("tradeLvl")LocalIntRef tradeLvl,
-            @Share("careerName")LocalRef<String> careerName
+            @Share("careerName")LocalRef<String> careerName,
+            @Share("professionName")LocalRef<String> professionName
     ) {
         if (recipe instanceof IMerchantRecipeWrapper) {
             IMerchantRecipeWrapper wrappedRecipe = (IMerchantRecipeWrapper) recipe;
             wrappedRecipe.tsl$setTradeLevel(tradeLvl.get());
             wrappedRecipe.tsl$setCareer(careerName.get());
+            wrappedRecipe.tsl$setProfession(professionName.get());
         }
         return recipe;
     }

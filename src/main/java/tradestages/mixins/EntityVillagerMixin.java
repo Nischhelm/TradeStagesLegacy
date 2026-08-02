@@ -35,6 +35,7 @@ public abstract class EntityVillagerMixin {
         if (recipes == null || recipes.isEmpty()) return;
 
         String careerName = tsl$getCareerName();
+        String professionName = tsl$getProfessionName();
 
         //addMerchantRecipe turns some ITradeList (=trade entry) into usually a single MerchantRecipe (but not guaranteed for modded trades!)
         for (int i = tradeCount.get(); i < this.buyingList.size(); i++) {
@@ -44,6 +45,7 @@ public abstract class EntityVillagerMixin {
             IMerchantRecipeWrapper wrappedRecipe = (IMerchantRecipeWrapper) latestRecipe;
             wrappedRecipe.tsl$setTradeLevel(this.careerLevel);
             wrappedRecipe.tsl$setCareer(careerName);
+            wrappedRecipe.tsl$setProfession(professionName);
         }
     }
 
@@ -56,6 +58,17 @@ public abstract class EntityVillagerMixin {
         VillagerRegistry.VillagerCareer career = profession.getCareer(this.careerId - 1);
         if (career == null) return "unknown";
 
+        // ex "cartographer"
         return career.getName();
+    }
+
+    @Unique
+    private String tsl$getProfessionName() {
+        VillagerRegistry.VillagerProfession profession = this.getProfessionForge();
+        if (profession == null || profession.getRegistryName() == null)
+            return "minecraft:villager";
+
+        // ex "minecraft:farmer"
+        return profession.getRegistryName().toString();
     }
 }

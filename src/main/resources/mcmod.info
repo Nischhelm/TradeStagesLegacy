@@ -7,6 +7,6 @@
   "authorList": ${mod_author},
   "url": "",
   "updateUrl": "",
-  "logoFile": "",
-  "credits": "Quarris for making the original mod in 2022"
+  "logoFile": "logo.png",
+  "credits": "Quarris for making the original mod in 2022. Matty_Vybes for requesting the backport in the 1.12.2 modding coalition."
 }]

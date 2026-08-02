@@ -11,7 +11,8 @@
         "MerchantRecipeMixin_ReadWrite"
     ],
     "client": [
-        "GuiMerchantMixin"
+        "client.GuiContainerMixin_ClearCache",
+        "client.GuiMerchantMixin"
     ],
     "injectors": {
         "defaultRequire": 1
