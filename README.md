@@ -6,7 +6,8 @@ Backport and modification of [Trade Stages](https://www.curseforge.com/minecraft
 
 Note: This mod requires Mixin & MixinExtras. 
 Many mods pack those, so i didn't add a specific required dependency for it. 
-My suggestion is to use [FermiumBooter](https://www.curseforge.com/minecraft/mc-mods/fermiumbooter), but other mods work too.
+My suggestion is to use [FermiumBooter](https://www.curseforge.com/minecraft/mc-mods/fermiumbooter), but other mods work too. 
+For the optional compat with [EasierVillagerTrading](https://www.curseforge.com/minecraft/mc-mods/easiervillagertrading), FermiumBooter is required though.
 
 ## Configuration
 
