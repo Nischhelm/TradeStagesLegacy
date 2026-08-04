@@ -157,12 +157,12 @@ public class ItemCondition {
     }
 
     static ItemCondition parseItemCondition(JsonObject itemObj) {
-        if (!itemObj.has("item")) {
-            TradeStagesLegacy.LOGGER.warn("Item condition missing 'item' field, skipping rule");
+        if (!itemObj.has("id")) {
+            TradeStagesLegacy.LOGGER.warn("Item condition missing 'id' field, skipping rule");
             return null;
         }
+        String itemId = itemObj.get("id").getAsString();
 
-        String itemId = itemObj.get("item").getAsString();
         Integer meta = itemObj.has("meta") ? itemObj.get("meta").getAsInt() : null;
 
         JsonObject data = null;
