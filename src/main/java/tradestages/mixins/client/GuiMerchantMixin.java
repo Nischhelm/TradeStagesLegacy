@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import tradestages.TradeStagesLegacy;
 import tradestages.rules.TradeData;
-import tradestages.wrapper.IMerchantRecipeWrapper;
+import tradestages.mixinwrapper.IMerchantRecipeWrapper;
 
 import java.util.ArrayList;
 import java.util.List;

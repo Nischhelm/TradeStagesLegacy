@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import tradestages.wrapper.IMerchantRecipeWrapper;
+import tradestages.mixinwrapper.IMerchantRecipeWrapper;
 
 @Mixin(MerchantRecipe.class)
 public class MerchantRecipeMixin_ReadWrite implements IMerchantRecipeWrapper {

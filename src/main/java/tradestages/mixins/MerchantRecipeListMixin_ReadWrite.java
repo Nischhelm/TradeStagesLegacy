@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import tradestages.wrapper.IMerchantRecipeWrapper;
+import tradestages.mixinwrapper.IMerchantRecipeWrapper;
 
 @Mixin(MerchantRecipeList.class)
 public class MerchantRecipeListMixin_ReadWrite {

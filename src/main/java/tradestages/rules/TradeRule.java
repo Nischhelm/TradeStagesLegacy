@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.village.MerchantRecipe;
 import tradestages.TradeStagesLegacy;
-import tradestages.wrapper.IMerchantRecipeWrapper;
+import tradestages.mixinwrapper.IMerchantRecipeWrapper;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;

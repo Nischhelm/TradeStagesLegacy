@@ -1,4 +1,4 @@
-package tradestages.wrapper;
+package tradestages.mixinwrapper;
 
 import javax.annotation.Nullable;
 
