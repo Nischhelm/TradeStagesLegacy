@@ -1,4 +1,3 @@
-- mark gamestages the play has already green or whatever in tooltip
 - fix shift click blocked trade in easiervilltrad making the server hang
 - general compat for easiervillagertrading
-- debug cfg to dump prof/career names to startup log
+- reload command?

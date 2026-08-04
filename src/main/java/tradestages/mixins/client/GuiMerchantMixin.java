@@ -1,5 +1,6 @@
 package tradestages.mixins.client;
 
+import net.darkhax.gamestages.GameStageHelper;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiMerchant;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -8,6 +9,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.IMerchant;
 import net.minecraft.inventory.ContainerMerchant;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
 import org.spongepowered.asm.mixin.Final;
@@ -18,8 +20,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import tradestages.TradeStagesLegacy;
-import tradestages.rules.TradeData;
 import tradestages.mixinwrapper.IMerchantRecipeWrapper;
+import tradestages.rules.TradeData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +49,6 @@ public abstract class GuiMerchantMixin extends GuiContainer {
         MerchantRecipe recipe = recipes.get(index);
         if(!(recipe instanceof IMerchantRecipeWrapper)) return;
         if (TradeStagesLegacy.canTrade(this.mc.player, recipe)) return;
-        IMerchantRecipeWrapper wrappedRecipe = (IMerchantRecipeWrapper) recipe;
 
         // Draw invalid stage icon near the output slot
         int iconX = this.guiLeft + 89;
@@ -73,10 +74,14 @@ public abstract class GuiMerchantMixin extends GuiContainer {
         tooltip.add(I18n.format("merchant.invalid_stage"));
 
         for (String stage : stages) {
+            boolean hasStage = GameStageHelper.hasStage(this.mc.player, stage);
+            String color = (hasStage ? TextFormatting.GREEN : TextFormatting.RED).toString();
+
             // Check if translation exists, otherwise use stage name directly
             String key = "stage." + stage;
-            if (I18n.hasKey(key)) tooltip.add(I18n.format(key));
-            else tooltip.add(stage);
+            String stageName = I18n.hasKey(key) ? I18n.format(key) : stage;
+
+            tooltip.add(color + stageName);
         }
 
         this.drawHoveringText(tooltip, mouseX, mouseY);
