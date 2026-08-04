@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.VillagerRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import tradestages.mixins.VillagerProfessionAccessor;
+import tradestages.mixins.vanilla.VillagerProfessionAccessor;
 import tradestages.rules.TradeData;
 
 import java.io.*;

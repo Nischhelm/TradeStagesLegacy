@@ -1,19 +1,20 @@
 {
     "required": true,
-    "package": "tradestages.mixins",
+    "package": "tradestages.mixins.vanilla",
     "refmap": "mixins.tradestages.refmap.json",
     "compatibilityLevel": "JAVA_8",
     "minVersion": "0.8",
     "mixins": [
         "EntityVillagerMixin",
         "InventoryMerchantMixin_DenyTrade",
-        "MerchantRecipeListMixin_ReadWrite",
+        "MerchantRecipeListMixin_Write",
         "MerchantRecipeMixin_ReadWrite",
         "VillagerProfessionAccessor"
     ],
     "client": [
         "client.GuiContainerMixin_ClearCache",
-        "client.GuiMerchantMixin"
+        "client.GuiMerchantMixin",
+        "client.MerchantRecipeListMixin_Read"
     ],
     "injectors": {
         "defaultRequire": 1

@@ -1,4 +1,4 @@
-package tradestages.mixins.client;
+package tradestages.mixins.vanilla.client;
 
 import net.minecraft.client.gui.GuiMerchant;
 import net.minecraft.client.gui.inventory.GuiContainer;

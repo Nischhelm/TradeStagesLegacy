@@ -1,8 +1,9 @@
 package tradestages;
 
+import fermiumbooter.FermiumRegistryAPI;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import org.spongepowered.asm.launch.MixinBootstrap;
-import org.spongepowered.asm.mixin.Mixins;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -14,7 +15,8 @@ public class TradeStagesPlugin implements IFMLLoadingPlugin {
 
     public TradeStagesPlugin() {
         MixinBootstrap.init();
-        Mixins.addConfiguration("tradestages.mixins.json");
+        FermiumRegistryAPI.enqueueMixin(false, "tradestages.mixins.json");
+        FermiumRegistryAPI.enqueueMixin(true, "tradestages.mixins.easiervillagertrading.json", () -> Loader.isModLoaded("easiervillagertrading"));
     }
 
     @Override public String[] getASMTransformerClass() {

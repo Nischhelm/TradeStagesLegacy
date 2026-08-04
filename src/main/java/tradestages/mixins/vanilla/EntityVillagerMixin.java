@@ -1,4 +1,4 @@
-package tradestages.mixins;
+package tradestages.mixins.vanilla;
 
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;

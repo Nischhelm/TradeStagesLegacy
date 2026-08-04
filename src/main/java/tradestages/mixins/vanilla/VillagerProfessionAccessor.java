@@ -1,4 +1,4 @@
-package tradestages.mixins;
+package tradestages.mixins.vanilla;
 
 import net.minecraftforge.fml.common.registry.VillagerRegistry;
 import org.spongepowered.asm.mixin.Mixin;

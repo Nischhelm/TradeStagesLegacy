@@ -1,4 +1,4 @@
-package tradestages.mixins;
+package tradestages.mixins.vanilla;
 
 import net.minecraft.entity.IMerchant;
 import net.minecraft.entity.player.EntityPlayer;

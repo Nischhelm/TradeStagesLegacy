@@ -1,3 +1,1 @@
-- fix shift click blocked trade in easiervilltrad making the server hang
-- general compat for easiervillagertrading
 - reload command?

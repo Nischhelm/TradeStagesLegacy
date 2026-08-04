@@ -1,0 +1,14 @@
+{
+    "required": false,
+    "package": "tradestages.mixins.easiervillagertrading",
+    "refmap": "mixins.tradestages.refmap.json",
+    "compatibilityLevel": "JAVA_8",
+    "minVersion": "0.8",
+    "client": [
+        "BetterGuiMerchantMixin_FixShiftClick",
+        "BetterGuiMerchantMixin_RenderIcon"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

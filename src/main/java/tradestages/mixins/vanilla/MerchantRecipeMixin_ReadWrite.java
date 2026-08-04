@@ -1,4 +1,4 @@
-package tradestages.mixins;
+package tradestages.mixins.vanilla;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.village.MerchantRecipe;

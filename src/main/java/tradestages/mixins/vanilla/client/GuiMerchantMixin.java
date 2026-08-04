@@ -1,4 +1,4 @@
-package tradestages.mixins.client;
+package tradestages.mixins.vanilla.client;
 
 import net.darkhax.gamestages.GameStageHelper;
 import net.minecraft.client.gui.Gui;
