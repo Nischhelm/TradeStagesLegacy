@@ -32,7 +32,7 @@ public class MerchantRecipeListMixin_Read {
 
     @ModifyArg(
             method = "readFromBuf",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/village/MerchantRecipeList;add(Ljava/lang/Object;)Z")
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/village/MerchantRecipeList;add(Ljava/lang/Object;)Z", remap = false)
     )
     private static Object tsl_readTradeLevel(
             Object recipe,

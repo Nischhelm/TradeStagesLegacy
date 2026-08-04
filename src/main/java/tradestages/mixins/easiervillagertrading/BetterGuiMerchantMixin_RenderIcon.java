@@ -63,12 +63,14 @@ public abstract class BetterGuiMerchantMixin_RenderIcon extends GuiMerchant {
         }
 
         GlStateManager.popMatrix();
+
+        //TODO: also do the tooltip override but ugh
     }
 
     @WrapWithCondition(
             method = "drawGuiContainerForegroundLayer",
             at = @At(value = "INVOKE", target = "Lde/guntram/mcmod/easiervillagertrading/BetterGuiMerchant;drawTexturedModalRect(IIIIII)V"),
-            slice = @Slice(to = @At(value = "FIELD", target = "Lde/guntram/mcmod/easiervillagertrading/BetterGuiMerchant;scrollCount:I", ordinal = 4, opcode = Opcodes.GETFIELD))
+            slice = @Slice(to = @At(value = "FIELD", target = "Lde/guntram/mcmod/easiervillagertrading/BetterGuiMerchant;scrollCount:I", ordinal = 4, opcode = Opcodes.GETFIELD, remap = false))
     )
     private boolean tsl_dontDrawOtherArrows(BetterGuiMerchant instance, int x, int y, int textureX, int textureY, int width, int height, @Local(name = "trade") MerchantRecipe recipe){
         return TradeStagesLegacy.canTrade(this.mc.player, recipe);

@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
 @Mixin(EntityVillager.class)
 public abstract class EntityVillagerMixin {
 
-    @Shadow public abstract VillagerRegistry.VillagerProfession getProfessionForge();
+    @Shadow(remap = false) public abstract VillagerRegistry.VillagerProfession getProfessionForge();
     @Shadow private int careerId;
     @Shadow private int careerLevel;
     @Shadow @Nullable private MerchantRecipeList buyingList;

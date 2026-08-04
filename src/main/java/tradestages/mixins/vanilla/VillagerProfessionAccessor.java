@@ -8,6 +8,6 @@ import java.util.List;
 
 @Mixin(VillagerRegistry.VillagerProfession.class)
 public interface VillagerProfessionAccessor {
-    @Accessor("careers")
+    @Accessor(value = "careers", remap = false)
     List<VillagerRegistry.VillagerCareer> getCareers();
 }
