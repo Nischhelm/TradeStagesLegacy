@@ -62,7 +62,7 @@ dependencies {
     compileOnly "io.github.llamalad7:mixinextras-common:${mixin_extras_version}"
     annotationProcessor "io.github.llamalad7:mixinextras-common:${mixin_extras_version}"
 
-    implementation fg.deobf("libs:FermiumBooter:1.5.0-indev")
+    implementation fg.deobf("curse.maven:fermiumbooter-968474:7279112")
     implementation fg.deobf("curse.maven:game-stages-268655:2951840")
     implementation fg.deobf("curse.maven:bookshelf-228525:2836960")
     implementation fg.deobf("curse.maven:easiervillagertrading-261605:2656954")
