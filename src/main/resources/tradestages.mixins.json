@@ -8,7 +8,8 @@
         "EntityVillagerMixin",
         "InventoryMerchantMixin_DenyTrade",
         "MerchantRecipeListMixin_ReadWrite",
-        "MerchantRecipeMixin_ReadWrite"
+        "MerchantRecipeMixin_ReadWrite",
+        "VillagerProfessionAccessor"
     ],
     "client": [
         "client.GuiContainerMixin_ClearCache",

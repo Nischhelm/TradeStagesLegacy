@@ -5,12 +5,18 @@ import com.google.gson.JsonParser;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.village.MerchantRecipe;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.common.registry.VillagerRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import tradestages.mixins.VillagerProfessionAccessor;
 import tradestages.rules.TradeData;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Mod(
         modid = TradeStagesLegacy.MODID,
@@ -28,6 +34,25 @@ public class TradeStagesLegacy {
    @Mod.EventHandler
    public void preInit(FMLPreInitializationEvent event) {
       loadTradeData(event.getModConfigurationDirectory());
+   }
+
+   @Mod.EventHandler
+   public void postInit(FMLPostInitializationEvent event) {
+      if (ModConfig.doDebugDump) {
+         LOGGER.info("=== Dumping all registered villagers ===");
+
+         for (VillagerRegistry.VillagerProfession profession : ForgeRegistries.VILLAGER_PROFESSIONS) {
+            String professionName = profession.getRegistryName() != null ? profession.getRegistryName().toString() : "unknown";
+
+            List<String> careerNames = new ArrayList<>();
+            for (VillagerRegistry.VillagerCareer career : ((VillagerProfessionAccessor) profession).getCareers())
+               careerNames.add(career.getName());
+
+            LOGGER.info("Profession: {} - Careers: {}", professionName, String.join(", ", careerNames));
+         }
+
+         LOGGER.info("=== End of villager dump ===");
+      }
    }
 
    public static void loadTradeData(File configDir) {
