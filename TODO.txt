@@ -1,1 +1,2 @@
 - reload command?
+- easiervillagertrading gui replace tooltip as well
