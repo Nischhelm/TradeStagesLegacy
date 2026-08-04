@@ -61,6 +61,8 @@ public abstract class BetterGuiMerchantMixin_RenderIcon extends GuiMerchant {
                 Gui.drawModalRectWithCustomSizedTexture(iconX, iconY, 0, 0, 14, 14, 32, 32);
             }
         }
+
+        GlStateManager.popMatrix();
     }
 
     @WrapWithCondition(
