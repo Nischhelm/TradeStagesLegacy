@@ -18,7 +18,7 @@ public class MerchantRecipeListMixin_Write {
         at = @At(value = "INVOKE", target = "Lnet/minecraft/network/PacketBuffer;writeInt(I)Lio/netty/buffer/ByteBuf;", ordinal = 1, shift = At.Shift.AFTER)
             // = after last write per entry
     )
-    public void tsl_writeTradeLevel(PacketBuffer buffer, CallbackInfo ci, @Local(name = "merchantrecipe") MerchantRecipe recipe) {
+    public void tsl_writeTradeLevel(PacketBuffer buffer, CallbackInfo ci, @Local MerchantRecipe recipe) {
         if (recipe instanceof IMerchantRecipeWrapper) {
             IMerchantRecipeWrapper wrappedRecipe = (IMerchantRecipeWrapper) recipe;
             String careerIdStr = wrappedRecipe.tsl$getCareer();
