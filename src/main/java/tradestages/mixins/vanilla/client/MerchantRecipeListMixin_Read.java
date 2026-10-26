@@ -1,51 +1,53 @@
 package tradestages.mixins.vanilla.client;
 
-import com.llamalad7.mixinextras.sugar.Share;
-import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
-import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.Unique;
 import tradestages.mixinwrapper.IMerchantRecipeWrapper;
 
 @Mixin(MerchantRecipeList.class)
 public class MerchantRecipeListMixin_Read {
 
-    @Inject(
-        method = "readFromBuf",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/network/PacketBuffer;readInt()I", ordinal = 1, shift = At.Shift.AFTER)
-    )
-    private static void tsl_readTradeLevel(
-            PacketBuffer buffer, CallbackInfoReturnable<MerchantRecipeList> cir,
-            @Share("tradeLvl")LocalIntRef tradeLvl,
-            @Share("careerName")LocalRef<String> careerName,
-            @Share("professionName")LocalRef<String> professionName
-    ) {
-        tradeLvl.set(buffer.readVarInt());
-        careerName.set(buffer.readString(32767));
-        professionName.set(buffer.readString(32767));
-    }
+    @Unique private static final int TSL_MAGIC = 0x54534C31; // "TSL1", see MerchantRecipeListMixin_Write
 
-    @ModifyArg(
-            method = "readFromBuf",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/village/MerchantRecipeList;add(Ljava/lang/Object;)Z", remap = false)
-    )
-    private static Object tsl_readTradeLevel(
-            Object recipe,
-            @Share("tradeLvl")LocalIntRef tradeLvl,
-            @Share("careerName")LocalRef<String> careerName,
-            @Share("professionName")LocalRef<String> professionName
-    ) {
-        if (recipe instanceof IMerchantRecipeWrapper) {
-            IMerchantRecipeWrapper wrappedRecipe = (IMerchantRecipeWrapper) recipe;
-            wrappedRecipe.tsl$setTradeLevel(tradeLvl.get());
-            wrappedRecipe.tsl$setCareer(careerName.get());
-            wrappedRecipe.tsl$setProfession(professionName.get());
+    @WrapMethod(method = "readFromBuf")
+    private static MerchantRecipeList tsl_readTradeLevel(PacketBuffer buffer, Operation<MerchantRecipeList> original) {
+        int end = buffer.writerIndex();
+        int start = -1;
+        if (end - buffer.readerIndex() >= 8 && buffer.getInt(end - 4) == TSL_MAGIC) {
+            int length = buffer.getInt(end - 8);
+            if (length >= 0 && end - 8 - length >= buffer.readerIndex()) start = end - 8 - length;
         }
-        return recipe;
+        // No trailer, e.g. the list was written by a subclass overriding writeToBuf
+        if (start < 0) return original.call(buffer);
+
+        // Hide the trailer from the original read, other mods (e.g. Raids Backport) read extra data until the buffer is empty
+        MerchantRecipeList list;
+        buffer.writerIndex(start);
+        try {
+            list = original.call(buffer);
+        } finally {
+            buffer.writerIndex(end);
+        }
+
+        buffer.readerIndex(start);
+        for (MerchantRecipe recipe : list) {
+            if (buffer.readerIndex() >= end - 8) break;
+            int tradeLvl = buffer.readVarInt();
+            String careerName = buffer.readString(32767);
+            String professionName = buffer.readString(32767);
+            if (recipe instanceof IMerchantRecipeWrapper) {
+                IMerchantRecipeWrapper wrappedRecipe = (IMerchantRecipeWrapper) recipe;
+                wrappedRecipe.tsl$setTradeLevel(tradeLvl);
+                wrappedRecipe.tsl$setCareer(careerName);
+                wrappedRecipe.tsl$setProfession(professionName);
+            }
+        }
+        buffer.readerIndex(end);
+        return list;
     }
 }
